@@ -38,7 +38,7 @@ public class CapturaCoords extends Service {
         @Override
         public void onLocationChanged(Location location) {
             Log.e(TAG, "onLocationChanged: " + location);
-            Firebase mFirebaseRef = new Firebase(Constantes.FIREBASE_LOCATION_COORDS);
+            Firebase mFirebaseRef = new Firebase(Constantes.FIREBASE_URL_COORDS);
             Coordenada coord = new Coordenada(location);
             AuthData authData = mFirebaseRef.getAuth();
             mFirebaseRef.child(authData.getUid()).push().setValue(coord);
