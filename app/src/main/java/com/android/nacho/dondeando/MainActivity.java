@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -16,7 +18,7 @@ import com.android.nacho.dondeando.utils.Constantes;
 import com.firebase.client.AuthData;
 import com.firebase.client.Firebase;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, DialogoRuta.DialogoRutaListener {
     private Firebase mFirebaseRef;
     private TextView txtNombre;
     private FloatingActionButton fab;
@@ -28,12 +30,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         mFirebaseRef = new Firebase(Constantes.FIREBASE_URL);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        this.setTitle("DondeAndo");
         setSupportActionBar(toolbar);
 
         AuthData authData = mFirebaseRef.getAuth();
         fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setBackgroundColor(getResources().getColor(R.color.green));
         fab.setOnClickListener(this);
 
         txtNombre = (TextView)findViewById(R.id.txtNombre);
@@ -51,7 +51,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (v.getId() == R.id.fab) {
             if (guardando == false) {
                 // si es falso, empieza a guardar la ruta (inicia el servicio)
-                startService(new Intent(this, CapturaCoords.class));
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                DialogoRuta dialogo = new DialogoRuta();
+                dialogo.show(fragmentManager, "Alerta");
+                //startService(new Intent(this, CapturaCoords.class));
                 txtNombre.setText("Guardando ruta...");
                 guardando = true;
             }
@@ -59,8 +62,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 // Si ya esta guardando, para el servicio.
                 stopService(new Intent(this, CapturaCoords.class));
                 txtNombre.setText("");
+                fab.setImageResource(R.drawable.ic_play);
 
             }
         }
+    }
+
+    @Override
+    public void onFinishEditDialog(String inputText) {
+        fab.setImageResource(R.drawable.ic_pausa);
+        Log.i("DIALOGO", "onFinishEditDialog: OK ");
+        Intent intent = new Intent(this, CapturaCoords.class);
+        intent.putExtra("nombre", inputText);
+        startService(intent);
     }
 }

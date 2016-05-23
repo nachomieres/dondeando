@@ -24,6 +24,7 @@ public class CapturaCoords extends Service {
     private LocationManager mLocationManager = null;
     private static final int LOCATION_INTERVAL = 1000;
     private static final float LOCATION_DISTANCE = 1;
+    private String ruta;
 
     private class LocationListener implements android.location.LocationListener {
         Location mLastLocation;
@@ -41,7 +42,9 @@ public class CapturaCoords extends Service {
             Firebase mFirebaseRef = new Firebase(Constantes.FIREBASE_URL_COORDS);
             Coordenada coord = new Coordenada(location);
             AuthData authData = mFirebaseRef.getAuth();
-            mFirebaseRef.child(authData.getUid()).push().setValue(coord);
+            //Firebase mFirebaseRef = new Firebase(Constantes.FIREBASE_URL_COORDS+"/"+authData.getUid());
+
+            mFirebaseRef.child(authData.getUid()).child(ruta).push().setValue(coord);
             mLastLocation.set(location);
         }
 
@@ -74,7 +77,7 @@ public class CapturaCoords extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.e(TAG, "onStartCommand");
-
+        ruta = (String)intent.getStringExtra("nombre");
         super.onStartCommand(intent, flags, startId);
         return START_STICKY;
     }
@@ -106,9 +109,9 @@ public class CapturaCoords extends Service {
             mLocationManager.requestLocationUpdates(
                     LocationManager.GPS_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
                     mLocationListeners[0]);
-            mLocationManager.requestLocationUpdates(
+            /*mLocationManager.requestLocationUpdates(
                     LocationManager.GPS_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
-                    mLocationListeners[1]);
+                    mLocationListeners[1]);*/
         } catch (java.lang.SecurityException ex) {
             Log.i(TAG, "fail to request location update, ignore", ex);
         } catch (IllegalArgumentException ex) {
