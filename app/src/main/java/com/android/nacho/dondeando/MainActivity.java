@@ -31,7 +31,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mFirebaseRef = new Firebase(Constantes.FIREBASE_URL);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         AuthData authData = mFirebaseRef.getAuth();
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(this);
@@ -54,8 +53,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 FragmentManager fragmentManager = getSupportFragmentManager();
                 DialogoRuta dialogo = new DialogoRuta();
                 dialogo.show(fragmentManager, "Alerta");
-                //startService(new Intent(this, CapturaCoords.class));
-                txtNombre.setText("Guardando ruta...");
                 guardando = true;
             }
             else {
@@ -63,6 +60,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 stopService(new Intent(this, CapturaCoords.class));
                 txtNombre.setText("");
                 fab.setImageResource(R.drawable.ic_play);
+                guardando = false;
 
             }
         }
@@ -72,6 +70,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onFinishEditDialog(String inputText) {
         fab.setImageResource(R.drawable.ic_pausa);
         Log.i("DIALOGO", "onFinishEditDialog: OK ");
+        txtNombre.setText("Guardando ruta "+ inputText);
         Intent intent = new Intent(this, CapturaCoords.class);
         intent.putExtra("nombre", inputText);
         startService(intent);

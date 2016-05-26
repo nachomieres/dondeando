@@ -37,7 +37,6 @@ public class DialogoRuta extends DialogFragment implements TextView.OnEditorActi
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dialog_name, container);
         mEditText = (EditText) view.findViewById(R.id.editTextRuta);
-        getDialog().setTitle("Hello");
 
         // Show soft keyboard automatically
         mEditText.requestFocus();
